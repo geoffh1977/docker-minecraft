@@ -1,0 +1,17 @@
+---
+# Docker User
+dockerUser: geoffh1977
+dockerUserEmail: geoffh1977@gmail.com
+license: gnu-gpl-v3.0
+
+# Source Build Variables
+buildImageName: openjdk8
+buildImageVersion: latest
+
+# Final Image Variables
+finalImageName: minecraft
+finalImageVersion: 1.14.1
+
+# Application Variables
+appName: Minecraft Server
+minecraftObjectId: ed76d597a44c5266be2a7fcd77a8270f1f0bc118
