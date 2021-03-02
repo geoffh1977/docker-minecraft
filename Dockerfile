@@ -1,32 +1,36 @@
 # Minecraft Docker Container Build File
-FROM geoffh1977/openjdk8:latest
-LABEL maintainer="geoffh1977 <geoffh1977@gmail.com>"
-USER root
+FROM openjdk:17-alpine
+LABEL maintainer="Geoffrey Harrison <geoffh1977@gmail.com>"
 
-# Download And Install Minecraft Server - Set run Script Permissions
-RUN mkdir -p /data /config /opt/minecraft && \
-    chown ${ALPINE_USER}:${ALPINE_USER} /data /config && \
+ARG VERSION
+ARG URL
+
+# Download And Install Minecraft Server And McStatus
+RUN mkdir -p /data /opt/minecraft && \
     apk -U --no-cache add wget tini py-pip && \ 
     pip --no-cache-dir install --upgrade pip mcstatus && \
-    wget -O /opt/minecraft/minecraft.jar -o /dev/null https://launcher.mojang.com/v1/objects/ed76d597a44c5266be2a7fcd77a8270f1f0bc118/server.jar
+    wget -O /opt/minecraft/minecraft.jar -o /dev/null ${URL}
 
-# Add Provided Configs To Container
-ADD config/ /config/
-ADD scripts/start.sh /usr/local/bin/start.sh
+COPY docker/scripts/start.sh /usr/local/bin/start.sh
+COPY docker/config/* /data/
 
-# Make Run File Executable
-RUN chmod 0755 /usr/local/bin/start.sh
+RUN chmod 0755 /usr/local/bin/start.sh && \
+  addgroup -g 1000 minecraft && \
+  adduser -u 1000 -D -s /bin/sh -G minecraft minecraft && \
+  chown minecraft:minecraft -R /data
 
-# Docker Settings
-USER ${ALPINE_USER}
-VOLUME ["/data","/config"]
+VOLUME ["/data"]
+
 EXPOSE 25565
+
+USER minecraft
+
 WORKDIR /data
 
-# Set Healthcheck
+# Configure McStatus As Healthcheck
 HEALTHCHECK --interval=5m --timeout=5s --start-period=1m \
   CMD mcstatus localhost ping || exit 1
 
 # Set Entrypoint and Default Config
-ENTRYPOINT ["/sbin/tini","/usr/local/bin/start.sh"]
-CMD ["default"]
+ENTRYPOINT ["/sbin/tini"]
+CMD ["/usr/local/bin/start.sh"]
