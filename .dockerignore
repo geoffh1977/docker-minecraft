@@ -1,5 +1,4 @@
-templates/
-config.yml
-LICENSE.md
-README.md
-Makefile
+.circleci/
+hooks/
+scripts/
+images/

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Get Software Version
+# shellcheck disable=SC2155
+export URL=$(cat URL)
+
+# Build Image
+docker build --build-arg URL="${URL}" -f "${DOCKERFILE_PATH}" -t "${IMAGE_NAME}" .
