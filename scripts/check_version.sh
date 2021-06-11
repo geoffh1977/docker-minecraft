@@ -4,7 +4,7 @@
 LATEST_TAG=$(curl -s https://hub.docker.com/v2/repositories/geoffh1977/minecraft/tags | jq -r '.results[].name' | grep -v "[a-z]" | sort -rn | head -n1)
 
 # Get Live Software Version
-VERSION=$(curl -Ls https://www.minecraft.net/en-us/download/server | grep server.jar | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+")
+VERSION=$(curl -Ls https://www.minecraft.net/en-us/download/server | grep server.jar | grep -Eo "[0-9]+\.[0-9]+(\.[0-9]+)?")
 
 # Display Results
 echo
